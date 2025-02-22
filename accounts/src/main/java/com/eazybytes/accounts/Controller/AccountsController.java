@@ -1,7 +1,6 @@
-package com.eazybytes.accounts.Controller;
+package com.eazybytes.accounts.controller;
 
-import com.eazybytes.accounts.Entity.Customer;
-import com.eazybytes.accounts.constants.AccountConstants;
+import com.eazybytes.accounts.constants.AccountsConstants;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
@@ -21,118 +20,147 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Eazy Bytes
+ */
+
 @Tag(
-      name = "CRUD REST API's for Accounts in EazyBank",
-      description = "CRUD REST API's for Accounts in EazyBank to create ,update and delete account details"
+        name = "CRUD REST APIs for Accounts in EazyBank",
+        description = "CRUD REST APIs in EazyBank to CREATE, UPDATE, FETCH AND DELETE account details"
 )
 @RestController
-@RequestMapping(path = "/api",produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
 @Validated
 public class AccountsController {
 
     private IAccountsService iAccountsService;
 
-    @PostMapping(path="/create")
     @Operation(
             summary = "Create Account REST API",
-            description = "REST API to create new Customer and account inside EazyBank"
-    )
-    @ApiResponse(
-            responseCode = "201",
-            description = "HTTP Status Created"
-    )
-    public ResponseEntity<ResponseDto>createAccount(@RequestBody @Valid CustomerDto customerDto) {
-        iAccountsService.createAccount(customerDto);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ResponseDto(AccountConstants.STATUS_201,AccountConstants.MESSAGE_201));
-    }
-
-
-    @GetMapping("/fetch")
-    @Operation(
-            summary = "Fetch Account REST API",
-            description = "REST API to fetch account details based on a mobile number"
-    )
-    public ResponseEntity<CustomerDto>fetchAccountDetails(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})") String mobileNumber){
-        CustomerDto customerDto=iAccountsService.fetchAccount(mobileNumber);
-        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
-    }
-
-    @PutMapping("/update")
-    @Operation(
-            summary = "Update Account REST API",
-            description = "REST API to update account details based on a mobile number"
+            description = "REST API to create new Customer &  Account inside EazyBank"
     )
     @ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                description = "HTTP Status OK"
-        ),
-        @ApiResponse(
-                responseCode = "500",
-                description = "HTTP Status Internal Server Error",
-                content = @Content(
-                schema = @Schema(implementation = ErrorResponseDto.class)
-                )
-        ),
-
             @ApiResponse(
-                    responseCode = "417",
-                    description = "EXpectation failed"
-            )
-
-    })
-    public ResponseEntity<ResponseDto>updateAccountDetails(@RequestBody CustomerDto customerDto) {
-
-        boolean isUpdated=iAccountsService.updateAccount(customerDto);
-        if(isUpdated){
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ResponseDto(AccountConstants.STATUS_200,AccountConstants.MESSAGE_200));
-        }else {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDto(AccountConstants.STATUS_417,AccountConstants.MESSAGE_417_UPDATE));
-        }
-
-    }
-
-    @DeleteMapping("/delete")
-    @Operation(
-            summary = "Delete Account REST API",
-            description = "REST API to delete account details based on a mobile number"
-    )
-    @ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                description = "HTTP Status OK"
-        ),
+                    responseCode = "201",
+                    description = "HTTP Status CREATED"
+            ),
             @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
-            ),
+            )
+    }
+    )
+    @PostMapping("/create")
+    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto) {
+        iAccountsService.createAccount(customerDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ResponseDto(AccountsConstants.STATUS_201, AccountsConstants.MESSAGE_201));
+    }
 
+    @Operation(
+            summary = "Fetch Account Details REST API",
+            description = "REST API to fetch Customer &  Account details based on a mobile number"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/fetch")
+    public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam
+                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                               String mobileNumber) {
+        CustomerDto customerDto = iAccountsService.fetchAccount(mobileNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
+    }
+
+    @Operation(
+            summary = "Update Account Details REST API",
+            description = "REST API to update Customer &  Account details based on a account number"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
             @ApiResponse(
                     responseCode = "417",
-                    description = "EXpectation failed"
+                    description = "Expectation Failed"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
             )
-    })
-    public ResponseEntity<ResponseDto>deleteAccountDetails(@RequestParam  @Pattern(regexp = "(^$|[0-9]{10})") String mobileNumber){
-        boolean isDeleted=iAccountsService.deleteAccount(mobileNumber);
-        if(isDeleted){
+    }
+    )
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDto> updateAccountDetails(@Valid @RequestBody CustomerDto customerDto) {
+        boolean isUpdated = iAccountsService.updateAccount(customerDto);
+        if(isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDto(AccountConstants.STATUS_200,AccountConstants.MESSAGE_200));
-        }else {
+                    .body(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
+        }else{
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDto(AccountConstants.STATUS_417,AccountConstants.MESSAGE_417_DELETE));
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_UPDATE));
         }
     }
+
+    @Operation(
+            summary = "Delete Account & Customer Details REST API",
+            description = "REST API to delete Customer &  Account details based on a mobile number"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "417",
+                    description = "Expectation Failed"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDto> deleteAccountDetails(@RequestParam
+                                                                @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                                String mobileNumber) {
+        boolean isDeleted = iAccountsService.deleteAccount(mobileNumber);
+        if(isDeleted) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
+        }
+    }
+
 
 }

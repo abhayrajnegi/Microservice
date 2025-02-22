@@ -1,4 +1,0 @@
-package com.eazybytes.accounts.exception;
-
-public class CustomerAlreadyExistsException extends {
-}
