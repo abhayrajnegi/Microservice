@@ -1,7 +1,3 @@
-spring:
-  config:
-    activate:
-      on-profile: "qa"
 
 build:
   version: "2.0"
@@ -12,5 +8,5 @@ accounts:
     name: "Smitha Ray - QA Lead"
     email: "smitha@eazybank.com"
   onCallSupport:
-    - (666) 265-3765
+    - (666)  265-3765
     - (555) 734-8371

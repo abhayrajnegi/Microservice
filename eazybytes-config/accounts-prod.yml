@@ -1,7 +1,3 @@
-spring:
-  config:
-    activate:
-      on-profile: "prod"
 
 build:
   version: "1.0"
@@ -14,3 +10,4 @@ accounts:
   onCallSupport:
     - (453) 392-4829
     - (236) 203-0384
+
